@@ -1,0 +1,2 @@
+class DreamwidthScraper < JournalScraper
+end
