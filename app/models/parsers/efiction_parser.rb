@@ -1,0 +1,2 @@
+class EfictionParser < Parser
+end

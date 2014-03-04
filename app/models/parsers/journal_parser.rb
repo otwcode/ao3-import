@@ -1,0 +1,3 @@
+class JournalParser < Parser
+  
+end

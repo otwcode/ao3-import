@@ -1,0 +1,2 @@
+class TwilightArchiveParser < Parser
+end

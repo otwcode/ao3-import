@@ -1,0 +1,2 @@
+class DeviantartParser < Parser
+end

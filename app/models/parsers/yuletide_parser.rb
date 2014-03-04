@@ -1,0 +1,2 @@
+class YuletideParser < Parser
+end
