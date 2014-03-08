@@ -6,7 +6,7 @@ class JournalScraper < Scraper
       if page.match(/adult_check/)
         page = get_adult_page(url)
       end
-      page
+      Hashie::Mash.new(url: url, text: page)
     end
   end
   

@@ -22,9 +22,11 @@ class Parser
   end
   
   def parse_work_page(page)
-    doc = Nokogiri::HTML.parse(page, nil, encoding) rescue ""
+    doc = Nokogiri::HTML.parse(page.text, nil, encoding) rescue ""
+    convert_relative_links(page.url)
     work_attributes = {
       title:      self.title,
+      creators:   self.creators(page.url),
       revised_at: self.date,
       chapters:   [{ content: self.content }]
     }
@@ -33,14 +35,37 @@ class Parser
   end
   
   def parse_chapter_page(page)
-    doc = Nokogiri::HTML.parse(page, nil, encoding) rescue ""
+    doc = Nokogiri::HTML.parse(page.text, nil, encoding) rescue ""
+    convert_relative_links(page.url)
     { content: self.content }
   end
-  
-  private
+
+  # Try to convert all relative links to absolute
+  def convert_relative_links(url)
+    base_url = doc.css('base').present? ? doc.css('base')[0]['href'] : url.split('?').first      
+    return if base_url.blank?
+    doc.css('a').each do |link|
+      link['href'] = converted_link(base_url, link['href'])
+    end
+  end
+
+  def converted_link(base_url, path)
+    return path if path.blank?
+    query_regex = /(\?.*)$/
+    query = path.match(query_regex) ? $1 : ''
+    begin
+      URI.join(base_url, path.gsub(query_regex, '')).to_s + query
+    rescue
+      path
+    end
+  end
   
   def title
     doc.css("title").inner_html
+  end
+
+  def creators(url)
+    nil
   end
 
   def content
@@ -57,7 +82,7 @@ class Parser
   end
 
   def date
-    Date.today
+    Time.now
   end
 
   def meta
@@ -73,20 +98,6 @@ class Parser
     end
 
     metadata
-  end
-  
-  def convert_revised_at(date_string)
-    begin
-      date = nil
-      if date_string.match(/^(\d+)$/)
-        # probably seconds since the epoch
-        date = Time.at($1.to_i)
-      end
-      date ||= Date.parse(date_string)
-      date > Date.today ? '' : date
-    rescue ArgumentError, TypeError
-      return ''
-    end
   end
   
   # We clean the text as if it had been submitted as the content of a chapter

@@ -13,7 +13,7 @@ class EfictionScraper < Scraper
           url = "#{site}/viewstory.php?action=printable&sid=#{storyid}&chapter=#{chapter}"
           body = get_page(url)
           break if stop_paging?(body)
-          pages << body
+          pages << Hashie::Mash.new(url: url, text: body)
           chapter += 1
         end
       }

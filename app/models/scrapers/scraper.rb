@@ -37,7 +37,7 @@ class Scraper
         raise ImportConnectionError
       end
     }
-    page
+    Hashie::Mash.new(url: url, text: page)
   end
   
   def formatted_url(url)

@@ -14,7 +14,7 @@ class FanfictionNetScraper < Scraper
           url = "#{base_url}#{chapter.to_s}#{title}"
           body = get_page(url)
           break if body.nil? || body.match(/FanFiction\.Net Message/)
-          pages << body
+          pages << Hashie::Mash.new(url: url, text: body)
           chapter += 1
         end
       }

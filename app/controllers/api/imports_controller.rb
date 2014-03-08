@@ -1,6 +1,8 @@
 class Api::ImportsController < Api::BaseController
   
   def create
+    @work = Import.new(import_params).perform
+    if @import.perform
     render json: import_params
   end
   

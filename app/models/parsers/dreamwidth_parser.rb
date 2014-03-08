@@ -1,4 +1,4 @@
-class DreamwidthParser < Parser
+class DreamwidthParser < JournalParser
 
   def title
     doc.css("title").inner_html.gsub! /^[^:]+: /, ""
@@ -20,7 +20,7 @@ class DreamwidthParser < Parser
   end
 
   def date
-    convert_revised_at doc.css("span.time").inner_text
+    DateFormatter.format doc.css("span.time").inner_text
   end
 
 end
